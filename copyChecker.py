@@ -4,13 +4,14 @@ import subprocess
 import io
 import time
 from select import select
+from config import specificCommonFiles
 
 class MossConfig:
     def __init__(self, mossPath):
         self.language = "cc"
-        self.commonFiles = ["exampleDir/a.cc", "exampleDir/d.h"]
+        self.commonFiles = specificCommonFiles
         self.mossPath = mossPath
-        self.appendage = "*.cc"
+        self.appendage = "core/src/*/*.cpp"
 
     def setPermissions(self):
         print("Setting executable permissions on the moss script.")
