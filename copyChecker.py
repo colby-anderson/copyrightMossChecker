@@ -100,8 +100,20 @@ def parseMossPath(arg):
     return mossPath
 
 
-def main(argv):
+def compareAll(argv):
     directory = parseSubmissionsDirectory(argv)
+    mossPath = parseMossPath(argv)
+    submissions = [f.path for f in os.scandir(directory) if f.is_dir()]
+    mossConfig = MossConfig(mossPath)
+    mossConfig.setPermissions()
+    for submissionA in submissions:
+        for submissionB in submissions:
+            if submissionA != submissionB:
+                mossConfig.compare(submissionA, submissionB)
+
+def compareTwo(argv):
+    directory1 = parseSubmissionsDirectory(argv)
+    directory2 = parseSubmissionsDirectory(argv)
     mossPath = parseMossPath(argv)
     submissions = [f.path for f in os.scandir(directory) if f.is_dir()]
     mossConfig = MossConfig(mossPath)
@@ -112,6 +124,20 @@ def main(argv):
                 mossConfig.compare(submissionA, submissionB)
                 return
 
+def compareSolutionAll(argv):
+    pass
+
+def compareSolutionTwo(argv):
+    pass
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    if sys.argv[1] == "two":
+        print("Two option selected. Only comparing two submissions.")
+        compareTwo(sys.argv[2:])
+    elif sys.argv[1] == "solutionAll":
+        compareSolutionAll(sys.argv[2:])
+    elif sys.argv[1] == "solutionTwo":
+        compareSolutionTwo(sys.argv[2:])
+    else:
+        print("Comparing all submissions.")
+        compareAll(sys.argv[2:])
