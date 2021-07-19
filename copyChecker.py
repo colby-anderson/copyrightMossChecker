@@ -149,13 +149,14 @@ def parseSolutionDirectory(arg):
 
 
 def parseSubmissionDirectory(arg, idx):
-    submissionPath = "./submission" + (idx + 1)
+    newVal = str(idx + 1)
+    submissionPath = "./submission" + newVal
     try:
         submissionPath = arg[idx]
         print("Submission path specified. Using submission path: " + submissionPath)
     except IndexError:
-        print("Submission" + (idx + 1) + " path not specified. Attempting to use"
-              "default submission" + (idx + 1) + " path: ./submission" + (idx + 1))
+        print("Submission" + newVal + " path not specified. Attempting to use"
+              "default submission" + newVal + " path: ./submission" + newVal)
     return submissionPath
 
 
