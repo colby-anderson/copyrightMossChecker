@@ -1,5 +1,9 @@
 import os
 import sys
+import subprocess
+import io
+import time
+from select import select
 
 class MossConfig:
     def __init__(self, mossPath):
@@ -14,29 +18,63 @@ class MossConfig:
         command = "chmod ug+x " + self.mossPath
         print(command)
         stream = os.popen(command)
-        print(stream)
 
     def mossCommand(self, submissionA, submissionB):
         l_flag = "-l " + self.language
         d_flag = "-d"
-        b_flag = ""
+        b_flags = ""
         prependSubmissionA = submissionA + "/"
         prependSubmissionB = submissionB + "/"
         for file in self.commonFiles:
-            b_flag += " -b " + prependSubmissionA + file
-            b_flag += " -b " + prependSubmissionB + file
+            b_flags += " -b " + prependSubmissionA + file
+            b_flags += " -b " + prependSubmissionB + file
         return self.mossPath + " " + l_flag + \
-               b_flag + " " + d_flag + " " + \
+               b_flags + " " + d_flag + " " + \
                submissionA + "/" + self.appendage + \
-               " " + submissionB+ "/" + self.appendage
+               " " + submissionB + "/" + self.appendage
+
+    def mossCommandList(self, submissionA, submissionB):
+        l_flag = "-l " + self.language
+        d_flag = "-d"
+        b_flags = []
+        prependSubmissionA = submissionA + "/"
+        prependSubmissionB = submissionB + "/"
+        for file in self.commonFiles:
+            b_flags.append("-b " + prependSubmissionA + file)
+            b_flags.append("-b " + prependSubmissionB + file)
+        d_flag = "-d" + " " + \
+               submissionA + "/" + self.appendage + \
+               " " + submissionB + "/" + self.appendage
+        return [self.mossPath, l_flag] + b_flags + [d_flag]
 
 
-def compare(submissionA, submissionB, mossConfig):
-    command = mossConfig.mossCommand(submissionA, submissionB)
-    print("Comparing " + submissionA + " and " + submissionB)
-    print("Running command:")
-    print(command)
-    stream = os.popen(command)
+    def compare(self, submissionA, submissionB):
+        command = self.mossCommand(submissionA, submissionB)
+        print("Comparing " + submissionA + " and " + submissionB)
+        print("Running command:")
+        print(command)
+        process = subprocess.Popen(command, shell=True)
+        # process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
+        # parseProcessStdOut(process)
+
+    def parseProcessStdOut(self):
+        pass
+        # lastLine = ""
+        # time.sleep(2)
+        # stdout = process.stdout.decode('utf-8')
+        # for line in iter(stdout.readline, ''):
+        #     print(line)
+        #     lastLine = line.rstrip()
+        # print(lastLine)
+        # while process.poll() is None:
+        #     # print('returncode is', p.returncode)
+        #     available_readers = select([process.stdout, process.stderr], [], [], 2.0)[0]
+        #     for r in available_readers:
+        #         print(r.read(1), end='')
+        # while process.returncode is None or process.stdout.closed:
+        #     # print('returncode is', p.returncode)
+        #     for line in iter(process.stdout.readline, ''):
+        #         print(line)
 
 def parseSubmissionsDirectory(arg):
     submissionDirectory = "./submissions"
@@ -70,7 +108,7 @@ def main(argv):
     for submissionA in submissions:
         for submissionB in submissions:
             if submissionA != submissionB:
-                compare(submissionA, submissionB, mossConfig)
+                mossConfig.compare(submissionA, submissionB)
                 return
 
 
