@@ -6,6 +6,18 @@ import time
 from select import select
 from config import specificCommonFiles
 
+# TODO:
+# - add documentation
+# - fill in README
+# - make system arguments optional
+# - make config more modular/extensible
+# - fill in support for different types of checking
+#   and make it more modular
+# - parse output of MOSS command to get URL. Then parse
+#   URL to get some kind of more efficient output.
+# - somehow make more fault tolerant (for example, base files
+#   that may exist in some students submissions but not in others
+
 class MossConfig:
     def __init__(self, mossPath):
         self.language = "cc"
@@ -100,6 +112,20 @@ def parseMossPath(arg):
     return mossPath
 
 
+"""
+    Compares every submission with every other submission for
+    plagiarism using MOSS. The specific flags and paths used for
+    the MOSS command depend on the MossConfig object that is made.
+    
+    Parameters
+    ----------
+    argv : list
+        The system arguments. Can either be length of 0, 1, or 2.
+
+    Returns
+    -------
+    void
+"""
 def compareAll(argv):
     directory = parseSubmissionsDirectory(argv)
     mossPath = parseMossPath(argv)
@@ -112,17 +138,18 @@ def compareAll(argv):
                 mossConfig.compare(submissionA, submissionB)
 
 def compareTwo(argv):
-    directory1 = parseSubmissionsDirectory(argv)
-    directory2 = parseSubmissionsDirectory(argv)
-    mossPath = parseMossPath(argv)
-    submissions = [f.path for f in os.scandir(directory) if f.is_dir()]
-    mossConfig = MossConfig(mossPath)
-    mossConfig.setPermissions()
-    for submissionA in submissions:
-        for submissionB in submissions:
-            if submissionA != submissionB:
-                mossConfig.compare(submissionA, submissionB)
-                return
+    pass
+    # directory1 = parseSubmissionsDirectory(argv)
+    # directory2 = parseSubmissionsDirectory(argv)
+    # mossPath = parseMossPath(argv)
+    # submissions = [f.path for f in os.scandir(directory) if f.is_dir()]
+    # mossConfig = MossConfig(mossPath)
+    # mossConfig.setPermissions()
+    # for submissionA in submissions:
+    #     for submissionB in submissions:
+    #         if submissionA != submissionB:
+    #             mossConfig.compare(submissionA, submissionB)
+    #             return
 
 def compareSolutionAll(argv):
     pass
