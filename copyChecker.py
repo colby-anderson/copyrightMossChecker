@@ -101,10 +101,10 @@ def parseSubmissionsDirectory(arg):
     return submissionDirectory
 
 
-def parseMossPath(arg):
+def parseMossPath(arg, idx):
     mossPath = "./moss"
     try:
-        mossPath = arg[1]
+        mossPath = arg[idx]
         print("Moss path specified. Using moss path: " + mossPath)
     except IndexError:
         print("Moss path not specified. Attempting to use"
@@ -128,7 +128,7 @@ def parseMossPath(arg):
 """
 def compareAll(argv):
     directory = parseSubmissionsDirectory(argv)
-    mossPath = parseMossPath(argv)
+    mossPath = parseMossPath(argv, 1)
     submissions = [f.path for f in os.scandir(directory) if f.is_dir()]
     mossConfig = MossConfig(mossPath)
     mossConfig.setPermissions()
@@ -137,25 +137,46 @@ def compareAll(argv):
             if submissionA != submissionB:
                 mossConfig.compare(submissionA, submissionB)
 
+def parseSolutionDirectory(arg):
+    solutionPath = "./solution"
+    try:
+        solutionPath = arg[0]
+        print("Solution path specified. Using solution path: " + solutionPath)
+    except IndexError:
+        print("Solution path not specified. Attempting to use"
+              "default solution path: ./solution")
+    return solutionPath
+
+
+def parseSubmissionDirectory(arg, idx):
+    submissionPath = "./submission" + (idx + 1)
+    try:
+        submissionPath = arg[idx]
+        print("Submission path specified. Using submission path: " + submissionPath)
+    except IndexError:
+        print("Submission" + (idx + 1) + " path not specified. Attempting to use"
+              "default submission" + (idx + 1) + " path: ./submission" + (idx + 1))
+    return submissionPath
+
+
 def compareTwo(argv):
-    pass
-    # directory1 = parseSubmissionsDirectory(argv)
-    # directory2 = parseSubmissionsDirectory(argv)
-    # mossPath = parseMossPath(argv)
-    # submissions = [f.path for f in os.scandir(directory) if f.is_dir()]
-    # mossConfig = MossConfig(mossPath)
-    # mossConfig.setPermissions()
-    # for submissionA in submissions:
-    #     for submissionB in submissions:
-    #         if submissionA != submissionB:
-    #             mossConfig.compare(submissionA, submissionB)
-    #             return
+    directory1 = parseSubmissionDirectory(argv, 0)
+    directory2 = parseSubmissionDirectory(argv, 1)
+    mossPath = parseMossPath(argv, 2)
+    mossConfig = MossConfig(mossPath)
+    mossConfig.setPermissions()
+    mossConfig.compare(directory1, directory2)
 
 def compareSolutionAll(argv):
     pass
 
 def compareSolutionTwo(argv):
-    pass
+    directory1 = parseSolutionDirectory(argv)
+    directory2 = parseSubmissionDirectory(argv, 1)
+    mossPath = parseMossPath(argv, 2)
+    mossConfig = MossConfig(mossPath)
+    mossConfig.setPermissions()
+    mossConfig.compare(directory1, directory2)
 
 if __name__ == "__main__":
     if sys.argv[1] == "two":
